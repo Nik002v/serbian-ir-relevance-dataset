@@ -1,52 +1,52 @@
-# Dataset card: Serbian passage retrieval relevance
+# Dataset Card: Serbian Passage Retrieval Relevance
 
-## Sažetak
+## Summary
 
-Ovaj skup prevodi zadatak odgovaranja na pitanja u zadatak dohvatanja pasusa: za svako zadržano pitanje ocenjuje se relevantnost 20 kandidatskih pasusa. Nastao je za master rad *Evaluacija sistema za dohvatanje informacija na srpskom jeziku* (Nikola Zlatanović, 2026). Jezik pitanja, naslova i pasusa je srpski; podaci su zapisani latinicom, uz poneke izvorne nazive i termine.
+This dataset turns a question-answering collection into a passage-retrieval evaluation resource: 20 candidate passages are judged for relevance to each retained question. It was created for the master's thesis *Evaluacija sistema za dohvatanje informacija na srpskom jeziku* (*Evaluation of Information Retrieval Systems in Serbian*; Nikola Zlatanović, 2026). Questions, titles, and passages are in Serbian, primarily in Latin script, with some original names and terms.
 
-## Poreklo i izgradnja
+## Source and construction
 
-Polazni skup je SQuAD-sr-md organizacije te-sla, ručno korigovan podskup srpskog SQuAD-a. Iz njega su izdvojena pitanja koja se mogu razumeti bez izvornog konteksta. Kandidatski pasusi formirani su kombinacijom retrieval kanala i prerangiranja opisanih u master radu. Konačni skup sadrži po 20 ocenjenih kandidata za svako zadržano pitanje. U nastanku oznaka učestvovali su LLM anotator i ljudska provera; detaljan protokol i ograničenja navedeni su u master radu i priloženom promptu. Ova objava ne sadrži izvorne identifikatore, međukorake ni skorove retrieval modela.
+The starting point was te-sla's SQuAD-sr-md, a manually corrected subset of Serbian SQuAD. Questions that could be understood without their original passage context were retained. Candidate passages were assembled using retrieval channels and reranking methods described in the thesis. The final dataset contains 20 judged candidates for each retained question. An LLM annotator and human review contributed to the relevance labels; the full protocol and its limitations are described in the thesis and the accompanying prompt. This release does not include original source identifiers, intermediate artifacts, or retrieval-model scores.
 
-Izvorna kartica skupa: <https://huggingface.co/datasets/te-sla/QuestionAnswering>. Originalni engleski skup: [SQuAD 1.1](https://rajpurkar.github.io/SQuAD-explorer/).
+Upstream dataset card: <https://huggingface.co/datasets/te-sla/QuestionAnswering>. Original English dataset: [SQuAD 1.1](https://rajpurkar.github.io/SQuAD-explorer/).
 
-## Struktura i obim
+## Structure and size
 
-Svi fajlovi su UTF-8 CSV sa zaglavljem. Polja `id`, `qid` i `pid` su decimalni lokalni identifikatori; pri spajanju ih je bezbedno čitati kao stringove.
+All data files are UTF-8 CSV files with headers. The `id`, `qid`, and `pid` fields are decimal local identifiers; reading them as strings is safe when joining files.
 
-| Fajl | Redova | Polja | Značenje |
+| File | Rows | Fields | Description |
 | --- | ---: | --- | --- |
-| `data/questions.csv` | 6.477 | `id,text` | Pitanja uključena u evaluaciju |
-| `data/dropped_questions.csv` | 1.007 | `id,text` | Pitanja odbačena pre evaluacije; poseban prostor lokalnih ID-jeva |
-| `data/passages.csv` | 1.739 | `id,title,text` | Korpus pasusa |
-| `data/annotations.csv` | 129.540 | `qid,pid,annotation` | Binarne oznake za 20 parova po zadržanom pitanju |
+| `data/questions.csv` | 6,477 | `id,text` | Questions included in evaluation |
+| `data/dropped_questions.csv` | 1,007 | `id,text` | Questions excluded before evaluation; a separate local ID namespace |
+| `data/passages.csv` | 1,739 | `id,title,text` | Passage corpus |
+| `data/annotations.csv` | 129,540 | `qid,pid,annotation` | Binary judgments for 20 pairs per retained question |
 
-Oznake: `1` = naslov i/ili pasus daju konkretan odgovor na pitanje; `0` = kandidat ne daje traženi odgovor. Ukupno: 7.878 pozitivnih i 121.662 negativnih oznaka. Za 179 pitanja nema pozitivne oznake među ocenjenih 20 kandidata. To **ne dokazuje** odsustvo relevantnog pasusa među svih 1.739.
+Labels: `1` means the title and/or passage provides a concrete answer to the question; `0` means the candidate does not provide the requested answer. There are 7,878 positive and 121,662 negative judgments. For 179 questions, none of the 20 judged candidates is positive. This **does not establish** that no relevant passage exists among all 1,739 passages.
 
-`qid` referencira isključivo `questions.id`, a `pid` referencira `passages.id`. ID-jevi iz `dropped_questions.csv` nisu `qid` iz anotacija, iako se numerički mogu poklapati.
+`qid` refers only to `questions.id`, while `pid` refers to `passages.id`. Identifiers in `dropped_questions.csv` are not judgment `qid` values, even if their numeric values overlap.
 
-## Preporučena upotreba
+## Intended uses
 
-- Evaluacija i analiza rerankera na **ocenjenim** parovima; testiranje kvaliteta rangiranja uz jasno navedeno postupanje s neocenjenim kandidatima.
-- Analiza pozitivnih i teških negativnih primera na srpskom jeziku.
-- Čitanje uz opis formiranja kandidatskog pool-a u master radu.
+- Evaluation and analysis of rerankers on **judged** pairs; evaluation of full rankings only with an explicitly documented policy for unjudged candidates.
+- Analysis of positive examples and hard negatives in Serbian.
+- Study alongside the candidate-pool construction described in the master's thesis.
 
-Podaci ne sadrže zvaničan train/dev/test split. Nasumična podela po parovima može procuriti informacije o istim pitanjima i pasusima između skupova. Ako pravite split za modeliranje, delite najmanje po pitanju i dokumentujte pravilo.
+The release has no official train/development/test split. A random split by pair can leak information about the same questions and passages across splits. For model development, split at least by question and document the procedure.
 
-## Ograničenja i rizici
+## Limitations and risks
 
-- Označeno je samo 20 selektovanih kandidata po pitanju, ne svih 1.739 pasusa. Neocenjeni par **nije** negativan primer.
-- Kandidati potiču iz retrieval sistema; metrike nad njima odražavaju i selekcioni bias.
-- Automatski/LLM potpomognute oznake i ljudska provera nisu garancija da je svaka oznaka bez greške.
-- Pitanja i pasusi nasleđuju jezičke, tematske i potencijalne faktografske greške iz izvornog QA/Wikipedia materijala.
-- Nema dodatne anonimizacije izvornog enciklopedijskog teksta; pre upotrebe za osetljive svrhe potreban je sopstveni pregled.
+- Only 20 selected candidates per question were judged, not all 1,739 passages. An unjudged pair is **not** a negative example.
+- Candidates were selected by retrieval systems, so metrics on this pool reflect selection bias.
+- LLM-assisted annotation and human review do not guarantee that every judgment is error-free.
+- Questions and passages inherit linguistic, topical, and possible factual errors from the source QA/Wikipedia material.
+- The original encyclopedic text has not been further anonymized; sensitive uses require an independent review.
 
-## Licenca i atribucija
+## License and attribution
 
-Kartica izvornog [te-sla/QuestionAnswering](https://huggingface.co/datasets/te-sla/QuestionAnswering) navodi **CC BY-SA 4.0**. Za tekstualne podatke u `data/` ova objava koristi isti režim uz obaveznu atribuciju izvornim autorima i oznaku da je skup izveden/prerađen. Detalji o ostalim fajlovima su u [LICENSE.md](LICENSE.md). Objavljena licenca izvora navedena je prema kartici izvornog skupa; korisnici treba sami da provere da li imaju sve potrebne dozvole za planiranu upotrebu.
+The upstream [te-sla/QuestionAnswering](https://huggingface.co/datasets/te-sla/QuestionAnswering) dataset card specifies **CC BY-SA 4.0**. The text data under `data/` is released here under the same terms, with attribution to the original authors and notice that this is a derived/adapted dataset. See [LICENSE.md](LICENSE.md) for the scope of licensing for the other files. The upstream license is reported as stated in its dataset card; users should independently check that their intended use has all necessary permissions.
 
-## Citiranje
+## Citation
 
-Zlatanović, Nikola. *Evaluacija sistema za dohvatanje informacija na srpskom jeziku*. Master rad, Elektrotehnički fakultet Univerziteta u Beogradu, 2026. Za mašinski čitljivo citiranje videti [CITATION.cff](CITATION.cff).
+Zlatanović, Nikola. *Evaluacija sistema za dohvatanje informacija na srpskom jeziku* (*Evaluation of Information Retrieval Systems in Serbian*). Master's thesis, School of Electrical Engineering, University of Belgrade, 2026. For machine-readable citation metadata, see [CITATION.cff](CITATION.cff).
 
-Takođe citirati izvorni SQuAD-sr-md: Rađenović, Jovana; Kitanović, Olivera; Stanković, Ranka; Škorić, Mihailo, *Development of Serbian QA Datasets through Prompt-Based Generation and Human Validation* (navedeno u kartici izvornog skupa). Za SQuAD: Rajpurkar, Pranav; Zhang, Jian; Lopyrev, Konstantin; Liang, Percy, *SQuAD: 100,000+ Questions for Machine Comprehension of Text*, 2016.
+Please also cite SQuAD-sr-md: Rađenović, Jovana; Kitanović, Olivera; Stanković, Ranka; Škorić, Mihailo, *Development of Serbian QA Datasets through Prompt-Based Generation and Human Validation* (as listed in the upstream dataset card). For SQuAD: Rajpurkar, Pranav; Zhang, Jian; Lopyrev, Konstantin; Liang, Percy, *SQuAD: 100,000+ Questions for Machine Comprehension of Text*, 2016.

@@ -1,28 +1,28 @@
-# Serbian passage retrieval relevance dataset
+# Serbian Passage Retrieval Relevance Dataset
 
-Skup podataka za evaluaciju dohvatanja pasusa na srpskom jeziku, nastao u okviru master rada Nikole Zlatanovića, *Evaluacija sistema za dohvatanje informacija na srpskom jeziku* (Elektrotehnički fakultet, Univerzitet u Beogradu, 2026).
+A dataset for evaluating passage retrieval in Serbian, developed as part of Nikola Zlatanović's master's thesis, *Evaluacija sistema za dohvatanje informacija na srpskom jeziku* (*Evaluation of Information Retrieval Systems in Serbian*; School of Electrical Engineering, University of Belgrade, 2026).
 
-U repozitorijumu su [master rad](thesis/MASTER_RAD_Nikola_Zlatanovic_FINAL.docx), [konačno uputstvo za binarnu procenu relevantnosti](prompts/KONACNO_UPUTSTVO_ZA_PROCENU_RELEVANTNOSTI.md) i [CSV podaci](data/). Detalji o poreklu, poljima i ograničenjima su u [dataset cardu](DATASET_CARD.md).
+This repository contains the [master's thesis](thesis/MASTER_RAD_Nikola_Zlatanovic_FINAL.docx), the [final instructions for binary relevance assessment](prompts/KONACNO_UPUTSTVO_ZA_PROCENU_RELEVANTNOSTI.md), and the [CSV dataset](data/). See the [dataset card](DATASET_CARD.md) for provenance, field definitions, and limitations. The thesis and annotation instructions are in Serbian.
 
-| Sadržaj | Broj |
+| Contents | Count |
 | --- | ---: |
-| Zadržana pitanja | 6.477 |
-| Odbačena pitanja (zasebna lista) | 1.007 |
-| Jedinstveni pasusi | 1.739 |
-| Anotirani parovi | 129.540 |
-| Parova po zadržanom pitanju | 20 |
-| Pozitivne / negativne oznake | 7.878 / 121.662 |
+| Retained questions | 6,477 |
+| Excluded questions (separate list) | 1,007 |
+| Unique passages | 1,739 |
+| Judged question–passage pairs | 129,540 |
+| Judged pairs per retained question | 20 |
+| Positive / negative judgments | 7,878 / 121,662 |
 
-## Fajlovi i identifikatori
+## Files and identifiers
 
-- `data/questions.csv`: `id,text` — zadržana pitanja.
-- `data/dropped_questions.csv`: `id,text` — odbačena pitanja; njihovi `id` su lokalni za ovaj fajl i nisu deo anotacija.
-- `data/passages.csv`: `id,title,text` — pasusi.
-- `data/annotations.csv`: `qid,pid,annotation` — veze ka `questions.id` i `passages.id`; `annotation` je `1` ako kandidat odgovara na pitanje, inače `0`.
+- `data/questions.csv`: `id,text` — retained questions.
+- `data/dropped_questions.csv`: `id,text` — excluded questions. Its `id` values are local to that file and are not used in the judgments.
+- `data/passages.csv`: `id,title,text` — passages.
+- `data/annotations.csv`: `qid,pid,annotation` — references to `questions.id` and `passages.id`; `annotation` is `1` if the candidate answers the question and `0` otherwise.
 
-Identifikatori su lokalni za ovu objavu, ne izvorni ID-jevi iz SQuAD-sr-md. **Parovi koji nisu u `annotations.csv` nisu ocenjeni; ne tretirati ih automatski kao negativne.** Pitanje bez pozitivnog para među 20 ocenjenih kandidata ne znači da nema relevantnog pasusa u celom korpusu.
+Identifiers are local to this release, not the original SQuAD-sr-md identifiers. **Pairs absent from `annotations.csv` are unjudged; do not automatically treat them as negative.** A question with no positive judgment among its 20 assessed candidates may still have a relevant passage elsewhere in the corpus.
 
-## Brza upotreba
+## Quick start
 
 ```python
 import csv
@@ -42,14 +42,14 @@ print(passages[example["pid"]]["title"], passages[example["pid"]]["text"])
 print(example["annotation"])
 ```
 
-Provera referencijalnog integriteta i očekivanih brojeva:
+To check referential integrity and the expected counts:
 
-```powershell
+```bash
 python scripts/validate_dataset.py
 ```
 
-## Poreklo, ograničenja i citiranje
+## Provenance, limitations, and citation
 
-Tekstovi potiču iz [SQuAD-sr-md skupa](https://huggingface.co/datasets/te-sla/QuestionAnswering), koji je izveden iz srpskog SQuAD skupa. Postupak odabira pitanja, formiranja top-20 kandidata, anotiranja i provere opisan je u priloženom master radu. Ovo **nije** iscrpno ocenjen kartezijanski proizvod svih pitanja i pasusa; kandidati su odabrani retrieval postupkom, što stvara selekcioni bias. Oznake treba čitati u kontekstu opisanog anotacionog i audit postupka, ne kao nepogrešiv gold za svaki mogući par.
+The text originates from [SQuAD-sr-md](https://huggingface.co/datasets/te-sla/QuestionAnswering), which was derived from Serbian SQuAD. The accompanying thesis describes question selection, construction of the top-20 candidate pools, annotation, and review. This is **not** an exhaustively judged Cartesian product of all questions and passages: candidates were selected by retrieval systems, introducing selection bias. Interpret the labels in the context of the annotation and audit procedure described in the thesis, not as infallible ground truth for every possible pair.
 
-Za citiranje ovog izdanja upotrebite podatke iz [CITATION.cff](CITATION.cff), a za izvorni tekst citirajte autore SQuAD-sr-md i izvornog SQuAD-a (videti [DATASET_CARD.md](DATASET_CARD.md)). Za opseg licenci videti [LICENSE.md](LICENSE.md).
+To cite this release, use [CITATION.cff](CITATION.cff). Please also cite the authors of SQuAD-sr-md and the original SQuAD (see the [dataset card](DATASET_CARD.md)). See [LICENSE.md](LICENSE.md) for the scope of the licenses.
