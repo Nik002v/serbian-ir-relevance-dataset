@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "Please cite the master's thesis and the upstream SQuAD-sr-md dataset when using this dataset."
+type: dataset
+title: "Serbian Passage Retrieval Relevance Dataset"
+authors:
+  - family-names: Zlatanović
+    given-names: Nikola
+date-released: 2026-09-18
+version: "1.0"
+repository-code: "https://github.com/Nik002v/serbian-ir-relevance-dataset"
+abstract: "A Serbian information retrieval dataset with 6,477 questions, 1,739 passages, and 129,540 binary relevance judgments."
+keywords:
+  - information retrieval
+  - Serbian
+  - passage relevance
+  - question answering
+references:
+  - type: thesis
+    title: "Evaluacija sistema za dohvatanje informacija na srpskom jeziku"
+    authors:
+      - family-names: Zlatanović
+        given-names: Nikola
+    year: 2026
+    institution:
+      name: "University of Belgrade, School of Electrical Engineering"
